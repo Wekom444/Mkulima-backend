@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: agrimarket_frontend
+    ports:
+      - "3000:80"
+    env_file:
+      - ../frontend/.env
+    restart: always
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agrimarket_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    restart: always
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: agrimarket_db
+    environment:
+      POSTGRES_USER: agrip_user
+      POSTGRES_PASSWORD: agrip_pass
+      POSTGRES_DB: agrip_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+volumes:
+  postgres_data:
